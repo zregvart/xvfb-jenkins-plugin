@@ -1,5 +1,5 @@
 <!-- 
-Copyright (c) 2012 <whome?> All rights reserved.
+Copyright (c) 2012 Zoran Regvart All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -23,37 +23,74 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-	<f:advanced>
-		<j:if test="${!empty(descriptor.installations)}">
-			<f:entry title="${%Xvfb installation}" field="installationName">
-				<select name="xvfb.installationName" class="setting-input">
-					<j:forEach var="installation" items="${descriptor.installations}">
-						<f:option selected="${installation.name == instance.installationName}"
-							value="${installation.name}">
-							${installation.name}
-						</f:option>
-					</j:forEach>
-				</select>
-			</f:entry>
-		</j:if>
+    <f:advanced>
+        <j:if test="${!empty(descriptor.installations)}">
+            <f:entry title="${%Xvfb installation}" field="installationName">
+                <select name="xvfb.installationName" class="setting-input">
+                    <j:forEach var="installation"
+                        items="${descriptor.installations}">
+                        <f:option
+                            selected="${installation.name == instance.installationName}"
+                            value="${installation.name}">
+                            ${installation.name}
+                        </f:option>
+                    </j:forEach>
+                </select>
+            </f:entry>
+        </j:if>
 
-		<f:entry title="${%Xvfb specific displayname}" field="displayName">
-			<f:textbox value="${instance.displayName}" />
-		</f:entry>
 
-		<f:entry title="${%Timeout in seconds}" field="timeout">
-			<f:textbox value="${instance.timeout}" />
-		</f:entry>
+        <f:entry title="${%Assign random available display name}" field="assignRandomDisplay">
+              <f:checkbox name="assignRandomDisplay" checked="${instance.assignRandomDisplay}" onclick="disableOrEnableDisplayName(this)"/>
+              <script>
+                    document.observe("dom:loaded", function() {
+                        disableOrEnableDisplayName($$("[name='assignRandomDisplay']")[0])
+                });
+                  function disableOrEnableDisplayName(cb) {
+                    if (cb.checked) {
+                        $('displayNameTxt').disable()
+                        $('displayNameTxt').title='${%Ignored, display will be randomly assigned}'
+                    }
+                    else {
+                        $('displayNameTxt').enable()
+                        $('displayNameTxt').title=''
+                    }
+                  }
+            </script>
+        </f:entry>
 
-		<f:entry title="${%Xvfb screen}" field="screen">
-			<f:textbox value="${instance.screen}" />
-		</f:entry>
 
-		<f:entry title="${%Log Xvfb output}" field="debug">
-			<f:checkbox value="${instance.debug}" />
-		</f:entry>
-	</f:advanced>
+        <f:entry title="${%Xvfb specific displayname}" field="displayName">
+            <f:textbox id="displayNameTxt" value="${instance.displayName}" />
+        </f:entry>
+
+        <f:entry title="${%Timeout in seconds}" field="timeout">
+            <f:textbox value="${instance.timeout}" />
+        </f:entry>
+
+        <f:entry title="${%Xvfb screen}" field="screen">
+            <f:textbox value="${instance.screen}" />
+        </f:entry>
+
+        <f:entry title="${%Xvfb display name offset}" field="displayNameOffset">
+            <f:textbox value="${instance.displayNameOffset}" />
+        </f:entry>
+
+        <f:entry title="${%Xvfb additional options}" field="additionalOptions">
+            <f:textbox value="${instance.additionalOptions}" />
+        </f:entry>
+
+        <f:entry title="${%Log Xvfb output}" field="debug">
+            <f:checkbox value="${instance.debug}" />
+        </f:entry>
+
+        <f:entry
+            title="${%Shoutdown Xvfb with whole job, not just with the main build action}"
+            field="shutdownWithBuild">
+            <f:checkbox value="${instance.shutdownWithBuild}" />
+        </f:entry>
+    </f:advanced>
 
 </j:jelly>
